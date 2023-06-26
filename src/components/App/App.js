@@ -1,32 +1,44 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import '../../style.css'
-import logo from '../../../images/logo.svg'
-import {api} from "../../../script";
+import logo from "../../../images/logo.svg";
+import {Navigation} from "../Navigation/Navigation";
+
+const categoryIds = {
+    index: 0,
+    technologies: 1,
+    sport: 2,
+    fashion: 3,
+    karpov: 6,
+}
+
+export const categoryNames = {
+    index: 'Главная',
+    fashion: 'Мода',
+    technologies: 'Технологии',
+    sport: 'Спорт',
+    karpov: 'Karpov'
+}
 
 export const App = () => {
-    api()
+    const [category, setCategory] = useState('index');
+    const [articles, setArticles] = useState({items: [], categories: [], sources: []});
+
+    const onNavClick = (e) => {
+        e.preventDefault();
+        setCategory(e.currentTarget.dataset.href);
+    }
+
+    useEffect(() => {
+        fetch('https://frontend.karpovcourses.net/api/v2/ru/news')
+            .then((res) => res.json())
+            .then(setArticles)
+    }, [category])
 
     return (
         <>
-            <header>
+            <header  className="header">
                 <div className="container">
-                    <nav className="navigation grid  header__navigation">
-                        <a href="#" className="navigation__logo">
-                            <img src={logo} className="navigation__image" alt="logo"/>
-                            <ul className="navigation__list">
-                                <li className="navigation__item"><a href="#"
-                                                                    className="navigation__link navigation__link--active">Главная</a>
-                                </li>
-                                <li className="navigation__item"><a href="#" className="navigation__link">Мода</a></li>
-                                <li className="navigation__item"><a href="#" className="navigation__link">Технологии</a>
-                                </li>
-                                <li className="navigation__item"><a href="#" className="navigation__link">Музыка</a>
-                                </li>
-                                <li className="navigation__item"><a href="#" className="navigation__link">Karpov</a>
-                                </li>
-                            </ul>
-                        </a>
-                    </nav>
+                    <Navigation onNavClick={onNavClick} currentCategory={category}  className='header__navigation'/>
                 </div>
             </header>
 
@@ -34,138 +46,42 @@ export const App = () => {
                 <section className="articles">
                     <div className="container grid">
                         <section className="articles__big-column">
-                            <article className="main-article">
-                                <div className="main-article__image-container">
-                                    <img className="main-article__image" src='' alt="Фото 1"/>
-                                </div>
-                                <div className="main-article__content">
-                                    <span className="article-category main-article__category">Технологии</span>
-                                    <h2 className="main-article__title">Отец жанра. Как уже забытый трип-хоп определяет
-                                        самую
-                                        популяр…</h2>
-                                    <p className="main-article__text">Новая мода на топовые наряды необычных цветов. В
-                                        сезоне – топики,
-                                        шорты-боксеры, сланцы и сандалии. А также большие солнечные очки и яркая
-                                        шляпка.</p>
-                                    <span className="article-source main-article__source"> Источник</span>
-                                </div>
-                            </article>
 
-                            <article className="main-article">
-                                <div className="main-article__image-container">
-                                    <img className="main-article__image" src='' alt="Фото новости"/>
-                                </div>
-                                <div className="main-article__content">
-                                    <span className="article-category main-article__category">Технологии</span>
-                                    <h2 className="main-article__title">Отец жанра. Как уже забытый трип-хоп определяет
-                                        самую
-                                        популяр…</h2>
-                                    <p className="main-article__text">Новая мода на топовые наряды необычных цветов. В
-                                        сезоне – топики,
-                                        шорты-боксеры, сланцы и сандалии. А также большие солнечные очки и яркая
-                                        шляпка.</p>
-                                    <span className="article-source main-article__source">Источник</span>
-                                </div>
-                            </article>
-
-                            <article className="main-article">
-                                <div className="main-article__image-container">
-                                    <img className="main-article__image" src='' alt="Фото новости"/>
-                                </div>
-                                <div className="main-article__content">
-                                    <span className="article-category main-article__category">Технологии</span>
-                                    <h2 className="main-article__title">Как DJ Shadow попал в книгу рекордов Гиннеса
-                                        из-за альбома</h2>
-                                    <p className="main-article__text">Технологические тренды меняют наш привычный мир.
-                                        Глобальные
-                                        корпорации задают новые тренды айтишникам на разработку, а дизайнеров
-                                        заставляю…</p>
-                                    <span className="article-source main-article__source">Источник</span>
-                                </div>
-                            </article>
+                            {articles.items.slice(0, 3).map((item) => {
+                                return (
+                                    <article className="main-article">
+                                        <div className="main-article__image-container">
+                                            <img className="article-img main-article__image" src={item.image} alt="Фото 1"/>
+                                        </div>
+                                        <div className="main-article__content">
+                                        <span className="article-category main-article__category">{
+                                            articles.categories.find(({id}) => item.category_id === id).name
+                                        }</span>
+                                            <h2 className="main-article__title">{item.title}</h2>
+                                            <p className="main-article__text">{item.description}</p>
+                                            <span
+                                                className="article-source main-article__source"> {articles.sources.find(({id}) => item.source_id === id).name}</span>
+                                        </div>
+                                    </article>
+                                )
+                            })}
 
                         </section>
                         <section className="articles__small-column">
-                            <article className="small-article">
-                                <h2 className="small-article__title">В американском зоопарке празднуют рождение гориллы:
-                                    видео</h2>
-                                <p className="small-article__caption">
-                                    <span className="article-date small-article__date">12 июля</span>
-                                    <span className="article-source small-article__source">Источник</span>
-                                </p>
-                            </article>
 
-                            <article className="small-article">
-                                <h2 className="small-article__title">Новую популяцию синих китов обнаружили в Индийском
-                                    океане</h2>
-                                <p className="small-article__caption">
-                                    <span className="article-date small-article__date">11 июля</span>
-                                    <span className="article-source small-article__source">Источник</span>
-                                </p>
-                            </article>
+                            {articles.items.slice(3, 12).map((item) => {
+                                return (
+                                    <article className="small-article">
+                                        <h2 className="small-article__title">{item.title}</h2>
+                                        <p className="small-article__caption">
+                                            <span className="article-date small-article__date">{item.date}</span>
+                                            <span
+                                                className="article-source small-article__source">{articles.sources.find(({id}) => item.source_id === id).name}</span>
+                                        </p>
+                                    </article>
+                                )
+                            })}
 
-                            <article className="small-article">
-                                <h2 className="small-article__title">Билл Гейтс уверен, что 2021 год будет лучше
-                                    2020-го. И вот почему</h2>
-                                <p className="small-article__caption">
-                                    <span className="article-date small-article__date">10 июля</span>
-                                    <span className="article-source small-article__source">Источник</span>
-                                </p>
-                            </article>
-
-                            <article className="small-article">
-                                <h2 className="small-article__title">Благотворительный забег с собаками: чем заняться на
-                                    выходных в Москве</h2>
-                                <p className="small-article__caption">
-                                    <span className="article-date small-article__date">10 июля</span>
-                                    <span className="article-source small-article__source">Источник</span>
-                                </p>
-                            </article>
-
-                            <article className="small-article">
-                                <h2 className="small-article__title">Как начать год так, чтобы потом было приятно
-                                    подводить итоги: чек-лист</h2>
-                                <p className="small-article__caption">
-                                    <span className="article-date small-article__date">9 июля</span>
-                                    <span className="article-source small-article__source">Источник</span>
-                                </p>
-                            </article>
-
-                            <article className="small-article">
-                                <h2 className="small-article__title">Как подготовиться к Новому году, все успеть и не
-                                    нервничать</h2>
-                                <p className="small-article__caption">
-                                    <span className="article-date small-article__date">12 июля</span>
-                                    <span className="article-source small-article__source">Источник</span>
-                                </p>
-                            </article>
-
-                            <article className="small-article">
-                                <h2 className="small-article__title">Как выбирать и дарить подарки — новогодние и не
-                                    только: чек-лист Esquire</h2>
-                                <p className="small-article__caption">
-                                    <span className="article-date small-article__date">11 июля</span>
-                                    <span className="article-source small-article__source">Источник</span>
-                                </p>
-                            </article>
-
-                            <article className="small-article">
-                                <h2 className="small-article__title">Мужчина из Франции завещал часть своего наследства
-                                    котам из Эрмитажа</h2>
-                                <p className="small-article__caption">
-                                    <span className="article-date small-article__date">13 июля</span>
-                                    <span className="article-source small-article__source">Источник</span>
-                                </p>
-                            </article>
-
-                            <article className="small-article">
-                                <h2 className="small-article__title">Самое трогательное видео дня: котенок не мог
-                                    забраться на крышу, но ему помогла другая…</h2>
-                                <p className="small-article__caption">
-                                    <span className="article-date small-article__date">14 июля</span>
-                                    <span className="article-source small-article__source">Источник</span>
-                                </p>
-                            </article>
                         </section>
                     </div>
                 </section>
@@ -173,20 +89,7 @@ export const App = () => {
 
             <footer className="footer">
                 <div className="container">
-                    <nav className="navigation grid footer__navigation">
-                        <a href="#" className="navigation__logo"><img className="navigation__image"
-                                                                      src={logo} alt="Логотип"/></a>
-                        <ul className="navigation__list">
-                            <li className="navigation__item"><a href="#"
-                                                                className="navigation__link navigation__link--active">Главная</a>
-                            </li>
-                            <li className="navigation__item"><a href="#" className="navigation__link">Мода</a></li>
-                            <li className="navigation__item"><a href="#" className="navigation__link">Технологии</a>
-                            </li>
-                            <li className="navigation__item"><a href="#" className="navigation__link">Музыка</a></li>
-                            <li className="navigation__item"><a href="#" className="navigation__link">Karpov</a></li>
-                        </ul>
-                    </nav>
+                    <Navigation className='footer__navigation'/>
 
                     <div className="footer__column">
                         <p className="footer__text">Сделано на Frontend курсе в <a
