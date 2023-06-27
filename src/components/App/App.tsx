@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import '../../style.css'
 import {Navigation} from "../Navigation/Navigation";
 import {MainArticle} from "../MainArticle/MainArticle";
 import {SmallArticle} from "../SmallArticle/SmallArticle";
+import {useEffect, useState} from "react";
 
 const categoryIds = {
     index: 0,
@@ -20,11 +21,11 @@ export const categoryNames = {
     karpov: 'Karpov'
 }
 
-export const App = () => {
+ const App = () => {
     const [category, setCategory] = useState('index');
     const [articles, setArticles] = useState({items: [], categories: [], sources: []});
 
-    const onNavClick = (e) => {
+    const onNavClick = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
         setCategory(e.currentTarget.dataset.href);
     }
@@ -51,6 +52,7 @@ export const App = () => {
                             {articles.items.slice(0, 3).map((item) => {
                                 return (
                                     <MainArticle
+                                        key={item.title}
                                         description={item.description}
                                         title={item.title}
                                         image={item.image}
@@ -66,6 +68,7 @@ export const App = () => {
                             {articles.items.slice(3, 12).map((item) => {
                                 return (
                                     <SmallArticle
+                                        key={item.title}
                                         title={item.title}
                                         date={item.date}
                                         source={articles.sources.find(({id}) => item.source_id === id).name}
@@ -93,5 +96,6 @@ export const App = () => {
     );
 }
 
+export default App;
 
 

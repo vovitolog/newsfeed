@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
     mode: process.env.NODE_ENV || 'production',
-    entry: './src/index.js',
+    entry: './src/index.tsx',
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'main.[contenthash].js',
@@ -23,7 +23,15 @@ module.exports = {
                 test: /\.svg$/,
                 type: "asset/resource"
             },
+            {
+                test: /\.ts|tsx$/,
+                use: "ts-loader",
+                exclude: /node_modules/
+            },
         ]
+    },
+    resolve: {
+        extensions: ['.js', '.ts', '.tsx']
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -31,6 +39,7 @@ module.exports = {
         }),
     ],
     devServer: {
+        hot: true,
         open: true
     }
 }
