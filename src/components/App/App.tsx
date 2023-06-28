@@ -4,6 +4,8 @@ import {Navigation} from "../Navigation/Navigation";
 import {MainArticle} from "../MainArticle/MainArticle";
 import {SmallArticle} from "../SmallArticle/SmallArticle";
 import {useEffect, useState} from "react";
+import {ArticleItem} from "../ArticleItem/ArticleItem";
+import {BrowserRouter} from "react-router-dom";
 
 const categoryIds = {
     index: 0,
@@ -37,12 +39,14 @@ export const categoryNames = {
     }, [category])
 
     return (
-        <>
+        <BrowserRouter>
             <header className="header">
                 <div className="container">
                     <Navigation onNavClick={onNavClick} currentCategory={category} className='header__navigation'/>
                 </div>
             </header>
+
+            <ArticleItem/>
 
             <main className="main">
                 <section className="articles">
@@ -92,7 +96,7 @@ export const categoryNames = {
                     </div>
                 </div>
             </footer>
-        </>
+        </BrowserRouter>
     );
 }
 
