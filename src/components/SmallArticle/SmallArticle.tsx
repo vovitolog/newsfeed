@@ -1,15 +1,24 @@
 import './SmallArticle.css'
-import React from "react";
+import React, {FC} from "react";
+import {Link} from "react-router-dom";
+import {beautifyDate} from "../../utils";
 
-export const SmallArticle = ({ title, date, source}) => {
-    return (
-        <article className="small-article">
-            <h2 className="small-article__title">{title}</h2>
-            <p className="small-article__caption">
-                <span className="article-date small-article__date">{date}</span>
-                <span
-                    className="article-source small-article__source">{source}</span>
-            </p>
-        </article>
-    )
+interface Props {
+    id: number;
+    title: string;
+    source: string;
+    date: string;
 }
+
+
+export const SmallArticle: FC<Props> = ({ id, title, date, source}) => {
+    return (
+        <Link to={`/article/${id}`} className="small-article">
+            <article className="small-article__container">
+                <h2 className="small-article__title">{title}</h2>
+                <span className="article-date">{source}</span>
+                <span className="article-source">{beautifyDate(date)}</span>
+            </article>
+        </Link>
+    );
+};

@@ -1,30 +1,44 @@
 import './Navigation.css'
-import React from "react";
+import React, {FC} from "react";
 import logo from "../../../images/logo.svg";
-import {categoryNames} from "../App/App";
+import {NavLink} from "react-router-dom";
+import {categoryNames} from "../../utils";
 
-export const Navigation = ({ onNavClick, currentCategory, className = '' }) => {
+interface Props {
+    className?: string;
+    placement: 'header' | 'footer';
+}
+
+export const Navigation: FC<Props> = ({className = '', placement = 'header'}) => {
     return (
-        <nav className={`grid navigation ${className}`}>
-            <a className="navigation__logo" data-href="index" href="#">
-                <img className="navigation__logo-image" src={logo} alt="Логотип" />
-            </a>
+        <nav className={`grid navigation navigation--${placement} ${className}`}>
+            <NavLink to="/" className="navigation__logo">
+                <img className="navigation__logo-image" src={logo} alt="Логотип"/>
+            </NavLink>
             <ul className="navigation__list">
                 {['index', 'fashion', 'technologies', 'sport', 'karpov'].map((item) => {
                     return (
                         <li className="navigation__item" key={item}>
-                            <a
-                                onClick={onNavClick}
-                                className={`navigation__link ${currentCategory === item ? 'navigation__link--active' : '' }`}
-                                data-href={item}
-                                href="#"
+                            <NavLink
+                                to={`/${item}`}
+                                className="navigation__link"
+                                activeClassName="navigation__link--active"
+                                isActive={(match, location) => {
+                                    if (match) {
+                                        return true;
+                                    }
+                                    if (item === 'index' && location.pathname === '/') {
+                                        return true;
+                                    }
+                                    return false;
+                                }}
                             >
                                 {categoryNames[item]}
-                            </a>
+                            </NavLink>
                         </li>
-                    )
+                    );
                 })}
             </ul>
         </nav>
-    )
-}
+    );
+};
